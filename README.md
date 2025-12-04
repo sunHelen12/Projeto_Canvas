@@ -11,7 +11,7 @@ Este projeto consiste no desenvolvimento de uma aplicação Web *client-side* qu
 
 O sistema opera seguindo um fluxo de engenharia de dados: o **Motor (Engine)** consome o XML, processa a estrutura em memória e a **Visualização** renderiza o estado atual no navegador utilizando manipulação de DOM.
 
-Este trabalho é um requisito avaliativo da disciplina **Programação Web I**, ministrada pelo professor **Bruno Silvério Costa**, no **Instituto Federal da Bahia (IFBA) - Campus Vitória da Conquista**.
+Este trabalho é um requisito avaliativo da disciplina **Programação Web I**, ministrada pelo professor **Bruno Costa**, no **Instituto Federal da Bahia (IFBA) - Campus Vitória da Conquista**.
 
 ## 🚀 Arquitetura e Funcionalidades
 
