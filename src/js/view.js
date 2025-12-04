@@ -33,7 +33,7 @@ const GameView = {
 
             // Espaço vertical entre as linhas e pontos
             if(i < dados.linhas - 1){
-                $board.append($("<div>").addClass("espaco-vertical-row"));                
+                $board.append($("<div>").addClass("espaco-vertical"));                
             }
         }
     }
