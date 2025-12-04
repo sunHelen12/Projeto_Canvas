@@ -1,3 +1,60 @@
+const GameEngine = {
+    // Memória interna - Estado do Jogo
+    dadosDoJogo:{},
+
+    /**
+     * Função de inicialização 
+     *  
+     */ 
+    iniciar: function(){
+        console.log("Motor ligado...")
+
+        // Fazendo requisição HTTP
+        $.get("data/game-config.xml")
+            .done((xml) =>{
+                console.log("XML Recebido!");
+                this.processarDados(xml);
+            })
+            .fail(() => {
+                alert("Erro ao carregar XML!")
+            });
+    },
+
+    // Jogando o XML para a memória JS
+    processarDados: function(xmlDoc){
+        console.log("Processando dados...");
+        // Navegando com o JQuery no XML
+        const $xml = $(xmlDoc);
+        const $tabuleiro = $xml.find("tabuleiro");
+
+        // Chamando Função inicializarLinhas
+        inicializarLinhas(xmlDoc);
+
+        // Extraindo atributos
+        this.dadosDoJogo = {
+            titulo: $xml.find('titulo').text(),
+            linhas: parseInt($tabuleiro.attr('linhas')),
+            colunas: parseInt($tabuleiro.attr('colunas'))
+        };       
+
+        // Chamando Visualização
+        if(typeof GameView !== 'undefined'){
+            GameView.renderizarTabuleiro(this.dadosDoJogo);
+        }
+    },    
+    
+    /**
+     * Processando a jogada 
+     */
+
+    processarJogada: function(idLinha, idJogador) {
+        console.log(`Game Engine recebeu jogada na linha ${idLinha}`);
+        // Chamando Função processarJogada
+        return processarJogada(idLinha, idJogador);
+    }
+};
+
+
 var estadoLinhas = {};
 
 /**
