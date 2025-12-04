@@ -1,61 +1,79 @@
 const GameView = {
-    renderizarTabuleiro:function(dados){
+    renderizarTabuleiro: function(dados) {
         console.log("Renderizando Visualização...");
-
-        // Atualizando o título da página
         $("#game-title").text(dados.titulo);
-
         const $board = $("#tabuleiro-visual");
-        // Limpando tudo antes de desenhar
         $board.empty();
 
-        //Loop para criar o Grid 
-        for(let i = 0; i < dados.linhas; i++){
-            // Criando uma linha container - Bootstrap
-            let $rowDiv = $("<div>").addClass("d-flex justify-content-center");
+        // Loop principal (Linhas)
+        for (let i = 0; i < dados.linhas; i++) {
+            
+            // Linha de Pontos e Arestas Horizontais
+            let $rowDiv = $("<div>").addClass("d-flex justify-content-center align-items-center");
 
-            for(let j = 0; j < dados.colunas; j++){
-                // Criando ponto
-                let $ponto = $("<div>")
-                    .addClass("ponto")
-                    // Guardando as coordenadas
-                    .attr("data-coord", `${i}-${j}`);
-                
+            for (let j = 0; j < dados.colunas; j++) {
+                // Cria o Ponto
+                let $ponto = $("<div>").addClass("ponto").attr("data-coord", `${i}-${j}`);
                 $rowDiv.append($ponto);
 
-                // Adicionando um espaço entre os pontos para adição da linha
-                if(j < dados.colunas - 1){
-                    $rowDiv.append($("<div>").addClass("espaco-horizontal"));
+                // Cria a Linha Horizontal (se não for a última coluna)
+                if (j < dados.colunas - 1) {
+                    let $linhaH = $("<div>")
+                        .addClass("espaco-horizontal linha-jogo") // ADICIONADO: classe linha-jogo
+                        .attr("id", `h-${i}-${j}`);               // ADICIONADO: ID para o motor achar (ex: h-0-0)
+                    
+                    $rowDiv.append($linhaH);
                 }
             }
-
             $board.append($rowDiv);
 
-            // Espaço vertical entre as linhas e pontos
-            if(i < dados.linhas - 1){
-                $board.append($("<div>").addClass("espaco-vertical"));                
+            // Linha de Arestas Verticais
+            // Se não for a última linha de pontos, cria as conexões verticais abaixo
+            if (i < dados.linhas - 1) {
+                let $verticalRow = $("<div>").addClass("d-flex justify-content-center");
+                
+                for (let j = 0; j < dados.colunas; j++) {
+                    // Cria a Linha Vertical
+                    let $linhaV = $("<div>")
+                        .addClass("espaco-vertical linha-jogo")
+                        .attr("id", `v-${i}-${j}`);               //  id (ex: v-0-0)
+                    
+                    $verticalRow.append($linhaV);
+
+                    // Adiciona um espaçador entre as linhas verticais para alinhar com os pontos
+                    if (j < dados.colunas - 1) {
+                        $verticalRow.append($("<div>").addClass("espaco-invisivel")); 
+                    }
+                }
+                $board.append($verticalRow);
             }
         }
+        
+        // Ativar os cliques logo após desenhar o tabuleiro
+        this.configurarCliques();
     },
 
-configurarCliques: function() {
+    configurarCliques: function() {
+        // Remove listeners antigos para evitar duplicidade
+        $(document).off('click', '.linha-jogo');
+
         $(document).on('click', '.linha-jogo', function() {
             let idClicado = $(this).attr('id');
-            
-            console.log("Clique detectado em:", idClicado); 
+            console.log("Clique detectado em:", idClicado);
+
+            // Integração com o Motor
             let jogadaValida = false;
             if (typeof GameEngine !== 'undefined' && GameEngine.processarJogada) {
-                 jogadaValida = GameEngine.processarJogada(idClicado, 'P1');
+                jogadaValida = GameEngine.processarJogada(idClicado, 'P1');
             } else if (typeof processarJogada === 'function') {
-                 jogadaValida = processarJogada(idClicado, 'P1');
-            } else {
-                console.error("Função de processar jogada não encontrada!");
+                // Fallback se a função estiver global
+                jogadaValida = processarJogada(idClicado, 'P1');
             }
-            
+
             if (jogadaValida) {
-                $(this).addClass('ocupada-p1');
+                $(this).addClass('ocupada-p1'); // Muda a cor
             } else {
-                alert("Essa linha já tem dono ou jogada inválida!");
+                console.log("Jogada inválida ou linha já ocupada.");
             }
         });
     }
