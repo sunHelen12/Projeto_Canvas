@@ -36,5 +36,27 @@ const GameView = {
                 $board.append($("<div>").addClass("espaco-vertical"));                
             }
         }
+    },
+
+configurarCliques: function() {
+        $(document).on('click', '.linha-jogo', function() {
+            let idClicado = $(this).attr('id');
+            
+            console.log("Clique detectado em:", idClicado); 
+            let jogadaValida = false;
+            if (typeof GameEngine !== 'undefined' && GameEngine.processarJogada) {
+                 jogadaValida = GameEngine.processarJogada(idClicado, 'P1');
+            } else if (typeof processarJogada === 'function') {
+                 jogadaValida = processarJogada(idClicado, 'P1');
+            } else {
+                console.error("Função de processar jogada não encontrada!");
+            }
+            
+            if (jogadaValida) {
+                $(this).addClass('ocupada-p1');
+            } else {
+                alert("Essa linha já tem dono ou jogada inválida!");
+            }
+        });
     }
 };
