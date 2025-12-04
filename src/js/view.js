@@ -36,25 +36,27 @@ const GameView = {
                 $board.append($("<div>").addClass("espaco-vertical-row"));                
             }
         }
+    },
+
+configurarCliques: function() {
+        $(document).on('click', '.linha-jogo', function() {
+            let idClicado = $(this).attr('id');
+            
+            console.log("Clique detectado em:", idClicado); 
+            let jogadaValida = false;
+            if (typeof GameEngine !== 'undefined' && GameEngine.processarJogada) {
+                 jogadaValida = GameEngine.processarJogada(idClicado, 'P1');
+            } else if (typeof processarJogada === 'function') {
+                 jogadaValida = processarJogada(idClicado, 'P1');
+            } else {
+                console.error("Função de processar jogada não encontrada!");
+            }
+            
+            if (jogadaValida) {
+                $(this).addClass('ocupada-p1');
+            } else {
+                alert("Essa linha já tem dono ou jogada inválida!");
+            }
+        });
     }
 };
-
-/**
- * Configura os eventos de clique nas linhas do tabuleiro.
- */
-function configurarCliques() {
-    // Pega qualquer elemento com a classe .linha-jogo
-    $('.linha-jogo').click(function() {
-        let idClicado = $(this).attr('id'); // Pega o ID (ex: h-0-0)
-
-        let jogadaValida = processarJogada(idClicado, 'P1');
-        
-        if (jogadaValida) {
-            // Feedback Visual: muda a cor
-            $(this).addClass('ocupada-p1');
-            $(this).off('click'); // Remove o clique para não clicar 2x
-        } else {
-            alert("Essa linha já tem dono!");
-        }
-    });
-}
