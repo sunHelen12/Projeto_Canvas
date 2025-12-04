@@ -16,13 +16,11 @@
 
         <div id="tabuleiro-visual" class="mt-4 p-4 bg-white shadow rounded"></div>
     </div>
-    <!-- JavaScript-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/engine.js"></script>
     <script src="js/view.js"></script>
 
     <script>
-        // Iniciando game quando a página carregar
         $(document).ready(function () {
             GameView.criarBotaoReiniciar();
             GameEngine.iniciar();
