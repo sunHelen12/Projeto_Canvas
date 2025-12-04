@@ -115,3 +115,51 @@ var estadoLinhas = {};
         console.log("Jogada inválida ou linha ocupada");
         return false; // Jogada inválida
     }
+
+//Lógica de gerenciamento de jogadores
+var jogadoresMemoria = [] //Variável global para guardar os jogadores na memória RAM
+
+/**
+ * Função chamada quando o jogo inicia.
+ * Lê o XML e preenche a variável jogadoresMemoria.
+ */
+function carregarJogadores(xmlDoc){
+    jogadoresMemoria = []; //Limpa para evitar lixo de memória
+
+    $(xmlDoc).find('jogador').each(function() {
+        var jogador = {
+            id: $(this).attr('id'),
+            nome: $(this).attr('nome'),
+            cor: $(this).attr('cor'),
+            atual: $(this).attr('atual'),
+            pontos: $(this).attr('pontos'),
+        };
+        jogadoresMemoria.push(jogador);            
+    });
+
+    console.log("Jogadores carregados na memória: ", jogadoresMemoria);
+}
+
+/**
+ * Função para retornar que é o jogador da vez atual.
+ */
+function obterJogadorAtual() {
+    return jogadoresMemoria.find(j => j.atual === true);
+}
+
+/**
+ * Função para trocar o turno.
+ * Deve ser chamada quando o jogador faz uma jogada e não fecha o quadrado.
+ */
+function alternarTurno() {
+    var indexAtual = jogadoresMemoria.findIndex(i => i.atual === true);
+
+    jogadoresMemoria[indexAtual].atual = false;
+
+    //Cálculo de próximo indice (para adição futura de mais jogadores simultâneos)
+    var proximoIndex = (indexAtual + 1) % jogadoresMemoria.length;
+
+    jogadoresMemoria[proximoIndex].atual = true;
+
+    console.log("Turno altenado. Agora é a vez de: ", jogadoresMemoria[proximoIndex].nome);
+}
