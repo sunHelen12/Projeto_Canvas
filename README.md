@@ -57,18 +57,15 @@ Siga os passos:
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [https://github.com/sunHelen12/Projeto_Canvas.git](https://github.com/sunHelen12/Projeto_Canvas.git)
+    git clone https://github.com/sunHelen12/Projeto_Canvas.git
     ```
 2.  **Acesse a pasta:**
     ```bash
     cd Projeto_Canvas
     ```
 3.  **Rode um servidor local:**
-    * Se usar **VS Code**: Instale a extensão "Live Server" e clique em "Go Live".
-    * Ou via **Python**:
-        ```bash
-        python3 -m http.server
-        ```
+    * Se usar **VS Code**: Instale a extensão "Live Server" e clique em "Go Live".  
+    
     * Ou via **Node.js**:
         ```bash
         npx http-server
@@ -77,3 +74,4 @@ Siga os passos:
 
 ---
 *Feito com 💙 e muito café.*
+
