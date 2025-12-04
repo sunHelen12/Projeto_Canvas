@@ -9,7 +9,7 @@
 
 Este projeto consiste no desenvolvimento de uma aplicação Web *client-side* que simula o clássico **Jogo dos Pontinhos**. O objetivo principal não é apenas o jogo em si, mas a implementação de uma arquitetura baseada em dados, onde um arquivo **XML** descreve as regras, o estado e os componentes visuais do jogo.
 
-O sistema opera seguindo um fluxo de engenharia de dados: o **Motor (Engine)** consome o XML, processa a estrutura em memória e a **Visualização** renderiza o estado atual no navegador utilizando manipulação de DOM.
+O sistema opera seguindo um fluxo: o **Motor (Engine)** consome o XML, processa a estrutura em memória e a **Visualização** renderiza o estado atual no navegador utilizando manipulação de DOM.
 
 Este trabalho é um requisito avaliativo da disciplina **Programação Web I**, ministrada pelo professor **Bruno Costa**, no **Instituto Federal da Bahia (IFBA) - Campus Vitória da Conquista**.
 
