@@ -15,3 +15,17 @@
 .espaco-vertical{    
     height: 50px;
 }
+
+.linha-jogo {
+    background-color: #eee;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.linha-jogo:hover {
+    background-color: #ccc;
+}
+
+.ocupada-p1 {
+    background-color: blue !important;
+}
