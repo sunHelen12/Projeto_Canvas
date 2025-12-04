@@ -1,4 +1,4 @@
-var estadoLinhas = {}; 
+var estadoLinhas = {};
 
 /**
  * Inicializa o estado das linhas do tabuleiro com base na configuração do XML.
@@ -26,4 +26,28 @@ function inicializarLinhas(xmlDoc) {
             estadoLinhas[id] = { id: id, status: 'livre', dono: null };
         }
     }
+}
+
+/**
+ * Processa uma jogada feita por um jogador.
+ * 
+ * @param {*} idLinha linha selecionada.
+ * @param {*} idJogador jogador que fez a jogada.
+ * @returns {boolean} true se a jogada for válida, false caso contrário.
+ */
+function processarJogada(idLinha, idJogador) {
+    let linha = estadoLinhas[idLinha];
+
+    if (linha && linha.status === 'livre') {
+        // Atualiza estado
+        linha.status = 'ocupada';
+        linha.dono = idJogador;
+
+        // Registra a jogada
+        console.log(`Linha ${idLinha} dominada por ${idJogador}`);
+        return true; // Jogada válida
+    }
+
+    console.log("Jogada inválida ou linha ocupada");
+    return false; // Jogada inválida
 }
