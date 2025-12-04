@@ -51,7 +51,17 @@ const GameEngine = {
         console.log(`Game Engine recebeu jogada na linha ${idLinha}`);
         // Chamando Função processarJogada
         return processarJogada(idLinha, idJogador);
-    }
+    },
+
+    reiniciar: function() {
+        console.log("Reiniciando jogo...");
+        
+        // 1. Zera a memória global das linhas para remover os donos
+        estadoLinhas = {}; 
+
+        // 2. Chama o iniciar novamente para recarregar o XML e redesenhar o tabuleiro
+        this.iniciar();
+    },
 };
 
 

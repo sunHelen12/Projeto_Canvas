@@ -76,5 +76,34 @@ const GameView = {
                 console.log("Jogada inválida ou linha já ocupada.");
             }
         });
+    },
+
+    criarBotaoReiniciar: function() {
+        // Evita duplicar o botão se ele já existir
+        if ($("#btn-reiniciar").length > 0) return;
+
+        const $btn = $("<button>")
+            .attr("id", "btn-reiniciar")
+            .addClass("btn btn-primary m-2") 
+            .text("Reiniciar Jogo")
+            .css({
+                "display": "block",
+                "width": "100%",
+                "height": "50px",
+                "font-size": "1.2rem",
+                "font-weight": "bold",
+                "margin": "20px auto",
+                "padding": "10px 20px",
+                "cursor": "pointer"
+            });
+
+        $btn.on("click", function() {
+            if (typeof GameEngine !== 'undefined') {
+                GameEngine.reiniciar();
+            }
+        });
+
+        // Insere o botão LOGO APÓS o tabuleiro visual
+        $("#tabuleiro-visual").after($btn);
     }
 };
