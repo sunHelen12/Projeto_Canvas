@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <jogo>
-    <tabuleiro linhas="6" colunas="6" espacamento="50px"/>
+    <tabuleiro linhas="6" colunas="6" espacamento="50px" />
 
     <configuracao>
         <titulo>JOGO DOS PONTINHOS - IFBA EDITION</titulo>
         <versao>1.0</versao>
     </configuracao>
 
+    <regras>
+        <modos-de-tempo>
+            <modo-tempo nome="Paciencia" tempo="0" />
+            <modo-tempo nome="Normal" tempo="30" />
+            <modo-tempo nome="Pensa rapido" tempo="15" />
+            <modo-tempo nome="Pensa muito rapido" tempo="10" />
+        </modos-de-tempo>
+    </regras>
+
     <linhas>
-        </linhas>
+    </linhas>
 </jogo>
