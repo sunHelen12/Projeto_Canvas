@@ -7,4 +7,7 @@
         <titulo>JOGO DOS PONTINHOS - IFBA EDITION</titulo>
         <versao>1.0</versao>
     </configuracao>
+
+    <linhas>
+        </linhas>
 </jogo>
