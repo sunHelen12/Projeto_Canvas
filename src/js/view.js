@@ -19,7 +19,7 @@ const GameView = {
                 let $ponto = $("<div>")
                     .addClass("ponto")
                     // Guardando as coordenadas
-                    .attr("data-cooord", `${i}-${j}`);
+                    .attr("data-coord", `${i}-${j}`);
                 
                 $rowDiv.append($ponto);
 
@@ -32,7 +32,7 @@ const GameView = {
             $board.append($rowDiv);
 
             // Espaço vertical entre as linhas e pontos
-            if(i < dados.linahs - 1){
+            if(i < dados.linhas - 1){
                 $board.append($("<div>").addClass("espaco-vertical-row"));                
             }
         }
