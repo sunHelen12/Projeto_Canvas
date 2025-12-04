@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jogo>
+    <tabuleiro linhas="6" colunas="6" espacamento="50px"/>
+
+    <configuracao>
+        <titulo>JOGO DOS PONTINHOS - IFBA EDITION</titulo>
+        <versao>1.0</versao>
+    </configuracao>
+</jogo>
