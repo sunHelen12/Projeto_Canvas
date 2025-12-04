@@ -19,4 +19,37 @@
 
     <linhas>
     </linhas>
+
+    <quadrados>
+        <quadrado id="q1"><aresta id="h1_1"/><aresta id="h2_1"/><aresta id="v1_1"/><aresta id="v1_2"/></quadrado>
+        <quadrado id="q2"><aresta id="h1_2"/><aresta id="h2_2"/><aresta id="v1_2"/><aresta id="v1_3"/></quadrado>
+        <quadrado id="q3"><aresta id="h1_3"/><aresta id="h2_3"/><aresta id="v1_3"/><aresta id="v1_4"/></quadrado>
+        <quadrado id="q4"><aresta id="h1_4"/><aresta id="h2_4"/><aresta id="v1_4"/><aresta id="v1_5"/></quadrado>
+        <quadrado id="q5"><aresta id="h1_5"/><aresta id="h2_5"/><aresta id="v1_5"/><aresta id="v1_6"/></quadrado>
+
+        <quadrado id="q6"><aresta id="h2_1"/><aresta id="h3_1"/><aresta id="v2_1"/><aresta id="v2_2"/></quadrado>
+        <quadrado id="q7"><aresta id="h2_2"/><aresta id="h3_2"/><aresta id="v2_2"/><aresta id="v2_3"/></quadrado>
+        <quadrado id="q8"><aresta id="h2_3"/><aresta id="h3_3"/><aresta id="v2_3"/><aresta id="v2_4"/></quadrado>
+        <quadrado id="q9"><aresta id="h2_4"/><aresta id="h3_4"/><aresta id="v2_4"/><aresta id="v2_5"/></quadrado>
+        <quadrado id="q10"><aresta id="h2_5"/><aresta id="h3_5"/><aresta id="v2_5"/><aresta id="v2_6"/></quadrado>
+
+        <quadrado id="q11"><aresta id="h3_1"/><aresta id="h4_1"/><aresta id="v3_1"/><aresta id="v3_2"/></quadrado>
+        <quadrado id="q12"><aresta id="h3_2"/><aresta id="h4_2"/><aresta id="v3_2"/><aresta id="v3_3"/></quadrado>
+        <quadrado id="q13"><aresta id="h3_3"/><aresta id="h4_3"/><aresta id="v3_3"/><aresta id="v3_4"/></quadrado>
+        <quadrado id="q14"><aresta id="h3_4"/><aresta id="h4_4"/><aresta id="v3_4"/><aresta id="v3_5"/></quadrado>
+        <quadrado id="q15"><aresta id="h3_5"/><aresta id="h4_5"/><aresta id="v3_5"/><aresta id="v3_6"/></quadrado>
+
+        <quadrado id="q16"><aresta id="h4_1"/><aresta id="h5_1"/><aresta id="v4_1"/><aresta id="v4_2"/></quadrado>
+        <quadrado id="q17"><aresta id="h4_2"/><aresta id="h5_2"/><aresta id="v4_2"/><aresta id="v4_3"/></quadrado>
+        <quadrado id="q18"><aresta id="h4_3"/><aresta id="h5_3"/><aresta id="v4_3"/><aresta id="v4_4"/></quadrado>
+        <quadrado id="q19"><aresta id="h4_4"/><aresta id="h5_4"/><aresta id="v4_4"/><aresta id="v4_5"/></quadrado>
+        <quadrado id="q20"><aresta id="h4_5"/><aresta id="h5_5"/><aresta id="v4_5"/><aresta id="v4_6"/></quadrado>
+
+        <quadrado id="q21"><aresta id="h5_1"/><aresta id="h6_1"/><aresta id="v5_1"/><aresta id="v5_2"/></quadrado>
+        <quadrado id="q22"><aresta id="h5_2"/><aresta id="h6_2"/><aresta id="v5_2"/><aresta id="v5_3"/></quadrado>
+        <quadrado id="q23"><aresta id="h5_3"/><aresta id="h6_3"/><aresta id="v5_3"/><aresta id="v5_4"/></quadrado>
+        <quadrado id="q24"><aresta id="h5_4"/><aresta id="h6_4"/><aresta id="v5_4"/><aresta id="v5_5"/></quadrado>
+        <quadrado id="q25"><aresta id="h5_5"/><aresta id="h6_5"/><aresta id="v5_5"/><aresta id="v5_6"/></quadrado>
+    </quadrados>
+
 </jogo>

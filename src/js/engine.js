@@ -124,4 +124,85 @@ var estadoLinhas = {};
 
         console.log("Jogada inválida ou linha ocupada");
         return false; // Jogada inválida
+    } 
+
+    var estadoQuadrados = {}; 
+
+    /**
+     * Processa a jogada e verifica se fechou quadrado
+     */
+    function processarJogada(idLinha, idJogador) {
+        let linha = estadoLinhas[idLinha];
+
+        if (!linha) {
+            estadoLinhas[idLinha] = { id: idLinha, status: 'livre', dono: null };
+            linha = estadoLinhas[idLinha];
+        }
+
+        if (linha.status === 'livre') {
+            linha.status = 'ocupada';
+            linha.dono = idJogador;
+            console.log(`Linha ${idLinha} dominada por ${idJogador}`);
+
+            let pontos = verificarQuadradosFechados(idLinha, idJogador);
+            
+            if (pontos > 0) {
+                console.log(`Jogador ${idJogador} fechou ${pontos} quadrado(s)!`);
+            }
+            
+            return true; 
+        }
+        return false; 
+    }
+
+    /**
+     * Verifica os vizinhos da linha recém clicada
+     */
+    function verificarQuadradosFechados(idLinha, idJogador) {
+        let partes = idLinha.split('-'); // ex: h-0-0
+        let tipo = partes[0];
+        let l = parseInt(partes[1]);
+        let c = parseInt(partes[2]);
+
+        let totalFechados = 0;
+
+        if (tipo === 'h') {
+            if (checarQuadrado(l, c, idJogador)) totalFechados++;
+            if (checarQuadrado(l - 1, c, idJogador)) totalFechados++;
+        } 
+        else if (tipo === 'v') {
+            if (checarQuadrado(l, c, idJogador)) totalFechados++;
+            if (checarQuadrado(l, c - 1, idJogador)) totalFechados++;
+        }
+
+        return totalFechados;
+    }
+
+    /**
+     * Verifica se as 4 arestas do quadrado [l, c] estão ocupadas
+     */
+    function checarQuadrado(l, c, idJogador) {
+        let idQuad = `q-${l}-${c}`;
+        
+        if (estadoQuadrados[idQuad]) return false;
+
+        let topo    = `h-${l}-${c}`;
+        let baixo   = `h-${l+1}-${c}`;
+        let esq     = `v-${l}-${c}`;
+        let dir     = `v-${l}-${c+1}`;
+
+        if (isOcupada(topo) && isOcupada(baixo) && isOcupada(esq) && isOcupada(dir)) {
+            
+            estadoQuadrados[idQuad] = idJogador;
+            
+            if (typeof GameView !== 'undefined') {
+                GameView.pintarQuadrado(idQuad, idJogador);
+            }
+            return true; 
+        }
+        return false;
+    }
+
+    function isOcupada(id) {
+        return estadoLinhas[id] && estadoLinhas[id].status === 'ocupada';
     }

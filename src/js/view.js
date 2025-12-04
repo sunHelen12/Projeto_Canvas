@@ -33,16 +33,17 @@ const GameView = {
                 let $verticalRow = $("<div>").addClass("d-flex justify-content-center");
                 
                 for (let j = 0; j < dados.colunas; j++) {
-                    // Cria a Linha Vertical
                     let $linhaV = $("<div>")
                         .addClass("espaco-vertical linha-jogo")
-                        .attr("id", `v-${i}-${j}`);               //  id (ex: v-0-0)
-                    
+                        .attr("id", `v-${i}-${j}`);
+
                     $verticalRow.append($linhaV);
 
-                    // Adiciona um espaçador entre as linhas verticais para alinhar com os pontos
                     if (j < dados.colunas - 1) {
-                        $verticalRow.append($("<div>").addClass("espaco-invisivel")); 
+                        let $quadrado = $("<div>")
+                            .addClass("espaco-invisivel")
+                            .attr("id", `q-${i}-${j}`); 
+                        $verticalRow.append($quadrado); 
                     }
                 }
                 $board.append($verticalRow);
@@ -78,8 +79,12 @@ const GameView = {
         });
     },
 
+    pintarQuadrado: function(idQuadrado, idJogador) {
+        console.log(`Pintando ${idQuadrado} para ${idJogador}`);
+        $(`#${idQuadrado}`).removeClass('quadrado-p1 quadrado-p2').addClass(idJogador === 'P1' ? 'quadrado-p1' : 'quadrado-p2');
+    },
+
     criarBotaoReiniciar: function() {
-        // Evita duplicar o botão se ele já existir
         if ($("#btn-reiniciar").length > 0) return;
 
         const $btn = $("<button>")
@@ -103,7 +108,6 @@ const GameView = {
             }
         });
 
-        // Insere o botão LOGO APÓS o tabuleiro visual
         $("#tabuleiro-visual").after($btn);
     }
 };
