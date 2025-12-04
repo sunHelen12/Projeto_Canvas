@@ -30,6 +30,9 @@ const GameEngine = {
         // Chamando Função inicializarLinhas
         inicializarLinhas(xmlDoc);
 
+        //Chamando os jogadores
+        carregarJogadores(xmlDoc);
+
         // Extraindo atributos
         this.dadosDoJogo = {
             titulo: $xml.find('titulo').text(),
@@ -40,6 +43,10 @@ const GameEngine = {
         // Chamando Visualização
         if(typeof GameView !== 'undefined'){
             GameView.renderizarTabuleiro(this.dadosDoJogo);
+
+            // if (typeof GameView.alternarTurno === 'function'){
+            //     GameView.alternarTurno();
+            // }
         }
     },    
     
@@ -56,6 +63,7 @@ const GameEngine = {
 
 
 var estadoLinhas = {};
+var jogadoresMemoria = [];
 
     /**
      * Inicializa o estado das linhas do tabuleiro com base na configuração do XML.
@@ -116,9 +124,6 @@ var estadoLinhas = {};
         return false; // Jogada inválida
     }
 
-//Lógica de gerenciamento de jogadores
-var jogadoresMemoria = [] //Variável global para guardar os jogadores na memória RAM
-
 /**
  * Função chamada quando o jogo inicia.
  * Lê o XML e preenche a variável jogadoresMemoria.
@@ -153,6 +158,7 @@ function obterJogadorAtual() {
  */
 function alternarTurno() {
     var indexAtual = jogadoresMemoria.findIndex(i => i.atual === true);
+    if (indexAtual === -1) return;
 
     jogadoresMemoria[indexAtual].atual = false;
 
@@ -162,4 +168,4 @@ function alternarTurno() {
     jogadoresMemoria[proximoIndex].atual = true;
 
     console.log("Turno altenado. Agora é a vez de: ", jogadoresMemoria[proximoIndex].nome);
-}
+};
