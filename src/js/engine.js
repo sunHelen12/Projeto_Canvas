@@ -10,7 +10,7 @@ const GameEngine = {
         console.log("Motor ligado...")
 
         // Fazendo requisição HTTP
-        $.get("data/game-config.xml")
+        $.get("../data/game-config.xml")
             .done((xml) =>{
                 console.log("XML Recebido!");
                 this.processarDados(xml);
