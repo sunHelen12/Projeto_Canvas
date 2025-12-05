@@ -59,9 +59,8 @@ const GameEngine = {
         if (typeof GameView !== 'undefined') {
             GameView.renderizarTabuleiro(this.dadosDoJogo);
 
-            if (typeof GameView.atualizarInterface === 'function') {
-                GameView.atualizarInterface();
-            }
+            if (typeof GameView.atualizarPlacar === 'function') GameView.atualizarPlacar();
+            if (typeof GameView.atualizarInterface === 'function') GameView.atualizarInterface();
         }
 
         iniciarCronometro();

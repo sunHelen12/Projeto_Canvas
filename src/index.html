@@ -37,25 +37,12 @@
         <div id="tabuleiro-visual" class="mt-4 p-4 bg-white shadow rounded"></div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
     <script src="js/engine.js"></script>
+    
     <script src="js/view.js"></script>
-  
-    <script>
-        $(document).ready(function () {
-            GameView.criarBotaoReiniciar();
-        GameEngine.iniciar();
-
-        
-        setTimeout(() => {
-            if (typeof GameView !== 'undefined' && typeof GameView.atualizarPlacar === 'function') {
-                GameView.atualizarPlacar();
-            }
-            if (typeof GameView !== 'undefined' && typeof GameView.atualizarInterface === 'function') {
-                GameView.atualizarInterface();
-            }
-        }, 800);
-        });
-    </script>
+    
+    <script src="js/main.js"></script>
 </body>
 
 </html>
