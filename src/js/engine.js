@@ -109,6 +109,7 @@ const GameEngine = {
 
         this.iniciar();
     },
+
     /**
      * Obtém a lista de jogadores.
      * 
@@ -127,7 +128,6 @@ const GameEngine = {
         return quadradosFechados === totalQuadradosPossiveis;
     }
 };
-
 
 var estadoLinhas = {};
 var jogadoresMemoria = [];

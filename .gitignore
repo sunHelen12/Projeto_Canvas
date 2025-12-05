@@ -1,0 +1,14 @@
+# Padrão JS, HTML e CSS
+
+build/
+out/
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+.env
+.vscode/
+.idea/
+.cache/
+.parcel-cache/
