@@ -2,7 +2,7 @@
 
 > "Conectando pontos, fechando caixas e processando dados."
 
-![Project Status](https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow)
+![Project Status](https://img.shields.io/badge/Status-Concluído-green)
 ![IFBA](https://img.shields.io/badge/Instituição-IFBA-green)
 
 ## 📖 Sobre o Projeto
@@ -71,4 +71,5 @@ Siga os passos:
 
 ---
 *Feito com 💙 e muito café.*
+
 
