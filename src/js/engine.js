@@ -71,6 +71,10 @@ const GameEngine = {
 
         jogadoresMemoria.forEach(j => j.pontos = 0);
 
+        if (typeof GameView !== 'undefined' && $("#alerta-fim").length > 0) {
+            $("#alerta-fim").remove();
+        }
+
         this.iniciar();
     },
     obterJogadores: function() {

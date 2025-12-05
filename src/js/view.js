@@ -135,9 +135,30 @@ const GameView = {
             });
 
         $btn.on("click", function() {
+            
+            if ($("#alerta-fim").length > 0) {
+                $("#alerta-fim").remove();
+                console.log("Alerta de fim de jogo removido.");
+            }
+
+            
+            if ($(document).off('click', '.linha-jogo').length === 0) {
+                GameView.configurarCliques();
+            }
+
             if (typeof GameEngine !== 'undefined') {
                 GameEngine.reiniciar();
             }
+
+            
+            setTimeout(() => {
+                if (typeof GameView.atualizarInterface === 'function') {
+                    GameView.atualizarInterface();
+                }
+                if (typeof GameView.atualizarPlacar === 'function') {
+                    GameView.atualizarPlacar();
+                }
+            }, 500);
         });
 
         $("#tabuleiro-visual").after($btn);
