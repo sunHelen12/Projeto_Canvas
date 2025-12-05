@@ -21,7 +21,7 @@ O projeto segue estritamente a arquitetura solicitada, dividindo responsabilidad
 2.  **Engine (JavaScript):** O "cérebro" que faz o *parsing* do XML, gerencia a lógica do jogo e mantém o estado em memória.
 3.  **Presentation Layer (View):** Interface reativa que traduz o estado da memória para elementos visuais na tela.
 
-## Jogo 🎮
+## 🎮 Jogo 
 
 ![Jogo dos Pontinhos](/assets/jogo_dos_pontinhos.gif)
 
