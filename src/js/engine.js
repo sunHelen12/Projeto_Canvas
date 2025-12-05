@@ -33,7 +33,11 @@ const GameEngine = {
             titulo: $xml.find('titulo').text(),
             linhas: parseInt($tabuleiro.attr('linhas')),
             colunas: parseInt($tabuleiro.attr('colunas'))
-        };       
+        };      
+        
+        totalQuadradosPossiveis = (this.dadosDoJogo.linhas - 1) * (this.dadosDoJogo.colunas - 1);
+        quadradosFechados = 0;
+        console.log(`Total de quadrados possíveis: ${totalQuadradosPossiveis}`);
 
         if(typeof GameView !== 'undefined'){
             GameView.renderizarTabuleiro(this.dadosDoJogo);
@@ -55,16 +59,26 @@ const GameEngine = {
         let idDoJogador = jogadorAtual ? jogadorAtual.id : 'P1';
 
         // Chamando Função processarJogada
-        return processarJogada(idLinha, idJogador);
+        return processarJogada(idLinha, idDoJogador);
     },
 
     reiniciar: function() {
         console.log("Reiniciando jogo...");
         
         estadoLinhas = {}; 
+        estadoQuadrados = {};     
+        quadradosFechados = 0;
+
+        jogadoresMemoria.forEach(j => j.pontos = 0);
 
         this.iniciar();
     },
+    obterJogadores: function() {
+        return jogadoresMemoria;
+    },
+    jogoTerminado: function() {
+        return quadradosFechados === totalQuadradosPossiveis;
+    }
 };
 
 
@@ -99,6 +113,8 @@ function inicializarLinhas(xmlDoc) {
 }
 
 var estadoQuadrados = {};
+var totalQuadradosPossiveis = 0;
+var quadradosFechados = 0;
 
 /**
  * Processa uma jogada feita por um jogador.
@@ -162,6 +178,9 @@ function carregarJogadores(xmlDoc) {
     });
 
     console.log("Jogadores carregados na memória:", jogadoresMemoria);
+    jogadoresMemoria.forEach(j => {
+        if (!j.pontos && j.pontos !== 0) j.pontos = 0;
+    });
 }
 
 /**
@@ -227,10 +246,38 @@ function checarQuadrado(l, c, idJogador) {
         
         estadoQuadrados[idQuad] = idJogador;
         
+        quadradosFechados++;  // ADICIONADO: conta quadrado fechado
+
+        // Atualiza pontuação do jogador
+        const jogador = jogadoresMemoria.find(j => j.id === idJogador);
+        if (jogador) {
+            jogador.pontos++;
+        }
+
         if (typeof GameView !== 'undefined') {
             GameView.pintarQuadrado(idQuad, idJogador);
         }
-        return true; 
+
+        // ADICIONADO: Verifica se o jogo acabou
+        if (quadradosFechados === totalQuadradosPossiveis) {
+            setTimeout(() => {
+                const p1 = jogadoresMemoria[0];
+                const p2 = jogadoresMemoria[1];
+                let vencedor = p1.pontos > p2.pontos ? p1.nome : p2.nome;
+                let placarVencedor = Math.max(p1.pontos, p2.pontos);
+
+                if (p1.pontos === p2.pontos) {
+                    vencedor = "Empate";
+                    placarVencedor = p1.pontos;
+                }
+
+                if (typeof GameView !== 'undefined' && GameView.exibirFimDeJogo) {
+                    GameView.exibirFimDeJogo(vencedor, placarVencedor);
+                }
+            }, 300);
+        }
+
+        return true;
     }
     return false;
 }

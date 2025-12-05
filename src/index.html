@@ -23,6 +23,16 @@
                 <p class="card-text">Próximo a jogar.</p>
             </div>
         </div>
+        <div class="card text-center mb-3">
+            <div class="card-header bg-dark text-white">
+                <strong>Placar</strong>
+            </div>
+            <div class="card-body">
+                <h4 id="placar-texto" class="card-title mb-0">
+                    Jogador 1: 0 × Jogador 2: 0
+                </h4>
+            </div>
+        </div>
 
         <div id="tabuleiro-visual" class="mt-4 p-4 bg-white shadow rounded"></div>
     </div>
@@ -33,7 +43,17 @@
     <script>
         $(document).ready(function () {
             GameView.criarBotaoReiniciar();
-            GameEngine.iniciar();
+        GameEngine.iniciar();
+
+        
+        setTimeout(() => {
+            if (typeof GameView !== 'undefined' && typeof GameView.atualizarPlacar === 'function') {
+                GameView.atualizarPlacar();
+            }
+            if (typeof GameView !== 'undefined' && typeof GameView.atualizarInterface === 'function') {
+                GameView.atualizarInterface();
+            }
+        }, 800);
         });
     </script>
 </body>

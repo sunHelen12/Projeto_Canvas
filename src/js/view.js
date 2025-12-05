@@ -95,6 +95,10 @@ const GameView = {
                 $elemento.css('background-color', jogadorAtual.cor);
                 
                 console.log("Interface atualizada: Vez de " + jogadorAtual.nome);
+
+                if (typeof GameView.atualizarPlacar === 'function') {
+                    GameView.atualizarPlacar();
+                }
             }
         }
     },
@@ -104,7 +108,12 @@ const GameView = {
      */
     pintarQuadrado: function(idQuadrado, idJogador) {
         console.log(`Pintando ${idQuadrado} para ${idJogador}`);
-        $(`#${idQuadrado}`).removeClass('quadrado-p1 quadrado-p2').addClass(idJogador === 'P1' ? 'quadrado-p1' : 'quadrado-p2');
+
+        if (typeof GameView.atualizarPlacar === 'function') {
+            GameView.atualizarPlacar();
+        }  
+
+        $(`#${idQuadrado}`).removeClass('quadrado-p1 quadrado-p2').addClass(idJogador === '1' ? 'quadrado-p1' : 'quadrado-p2');
     },
 
     criarBotaoReiniciar: function() {
@@ -132,5 +141,42 @@ const GameView = {
         });
 
         $("#tabuleiro-visual").after($btn);
+    },
+
+   atualizarPlacar: function() {
+        
+        if (typeof GameEngine !== 'undefined' && typeof GameEngine.obterJogadores === 'function') {
+            const jogadores = GameEngine.obterJogadores();
+            if (jogadores && jogadores.length >= 2) {
+                const p1 = jogadores[0];
+                const p2 = jogadores[1];
+                const texto = `${p1.nome}: ${p1.pontos} × ${p2.nome}: ${p2.pontos}`;
+                $("#placar-texto").text(texto);
+            }
+        }
+    },
+
+    
+    exibirFimDeJogo: function(vencedor, placar) {
+        const mensagem = vencedor === "Empate" 
+            ? `Fim de jogo! Empate com ${placar} pontos cada!`
+            : `Fim de jogo! Vitória de <strong>${vencedor}</strong> com ${placar} pontos!`;
+
+        $(document).off('click', '.linha-jogo');
+
+        if ($("#alerta-fim").length === 0) {
+            const alerta = `
+                <div id="alerta-fim" class="alert alert-success alert-dismissible fade show mt-4" role="alert">
+                    <strong>${mensagem}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            $("#tabuleiro-visual").before(alerta);
+        }
+
+        
+        if (typeof GameView.atualizarPlacar === 'function') {
+            GameView.atualizarPlacar();
+        }
     }
 };
