@@ -61,20 +61,44 @@ const GameView = {
             let idClicado = $(this).attr('id');
             console.log("Clique detectado em:", idClicado);
 
+            let jogador = null;
+            if (typeof obterJogadorAtual === 'function') {
+                jogador = obterJogadorAtual();
+            }
+
             // Integração com o Motor
             let jogadaValida = false;
             if (typeof GameEngine !== 'undefined' && GameEngine.processarJogada) {
-                jogadaValida = GameEngine.processarJogada(idClicado, 'P1');
-            } else if (typeof processarJogada === 'function') {
-                // Fallback se a função estiver global
-                jogadaValida = processarJogada(idClicado, 'P1');
+                jogadaValida = GameEngine.processarJogada(idClicado);
             }
 
             if (jogadaValida) {
-                $(this).addClass('ocupada-p1'); // Muda a cor
+                $(this).addClass('ocupada'); 
+
+                if (jogador) {
+                    this.style.setProperty('background-color', jogador.cor, 'important');
+                    this.style.setProperty('opacity', '1', 'important');
+                }
             } else {
                 console.log("Jogada inválida ou linha já ocupada.");
             }
         });
+    },
+
+    atualizarInterface: function() {
+        if (typeof obterJogadorAtual === 'function') {
+            var jogadorAtual = obterJogadorAtual();
+
+            if (jogadorAtual) {
+                var $elemento = $('#jogador-atual');
+                
+                $elemento.text(jogadorAtual.nome);
+                
+                $elemento.removeClass('bg-secondary bg-primary bg-danger');
+                $elemento.css('background-color', jogadorAtual.cor);
+                
+                console.log("Interface atualizada: Vez de " + jogadorAtual.nome);
+            }
+        }
     }
 };
