@@ -1,15 +1,14 @@
 const GameEngine = {
-    dadosDoJogo:{},
+    dadosDoJogo: {},
 
     /**
-     * Função de inicialização 
-     *  
-     */ 
-    iniciar: function(){
+     * Inicia o motor do jogo.
+     */
+    iniciar: function () {
         console.log("Motor ligado...")
 
         $.get("../data/game-config.xml")
-            .done((xml) =>{
+            .done((xml) => {
                 console.log("XML Recebido!");
                 this.processarDados(xml);
             })
@@ -18,83 +17,88 @@ const GameEngine = {
             });
     },
 
-    processarDados: function(xmlDoc){
+    /**
+     * Processa os dados do XML recebido.
+     * 
+     * @param {*} xmlDoc xml do jogo.
+     */
+    processarDados: function (xmlDoc) {
         console.log("Processando dados...");
         const $xml = $(xmlDoc);
         const $tabuleiro = $xml.find("tabuleiro");
 
-        // carrega os modos de tempo
         let modosDeTempo = [];
-        $xml.find('modo-tempo').each(function(){
+        $xml.find('modo-tempo').each(function () {
             modosDeTempo.push({
                 nome: $(this).attr('nome'),
                 tempo: parseInt($(this).attr('tempo'))
             });
         });
 
-        // Define o padrão se existir, ou o primeiro da lista
         let modoPadrao = modosDeTempo.find(m => m.nome === "Normal") || modosDeTempo[0];
         tempoPorTurno = modoPadrao.tempo;
-        
-        // Envia a lista para a View criar o dropdown
-        if(typeof GameView !== 'undefined' && typeof GameView.renderizarSeletorTempo === 'function'){
+
+        if (typeof GameView !== 'undefined' && typeof GameView.renderizarSeletorTempo === 'function') {
             GameView.renderizarSeletorTempo(modosDeTempo, tempoPorTurno);
         }
 
         inicializarLinhas(xmlDoc);
 
-        //Chamando os jogadores
         carregarJogadores(xmlDoc);
 
-        // Extraindo atributos
         this.dadosDoJogo = {
             titulo: $xml.find('titulo').text(),
             linhas: parseInt($tabuleiro.attr('linhas')),
             colunas: parseInt($tabuleiro.attr('colunas'))
-        };      
-        
+        };
+
         totalQuadradosPossiveis = (this.dadosDoJogo.linhas - 1) * (this.dadosDoJogo.colunas - 1);
         quadradosFechados = 0;
         console.log(`Total de quadrados possíveis: ${totalQuadradosPossiveis}`);
 
-        if(typeof GameView !== 'undefined'){
+        if (typeof GameView !== 'undefined') {
             GameView.renderizarTabuleiro(this.dadosDoJogo);
 
-            if (typeof GameView.atualizarInterface === 'function'){
+            if (typeof GameView.atualizarInterface === 'function') {
                 GameView.atualizarInterface();
             }
         }
 
         iniciarCronometro();
-    },    
-    
+    },
+
     /**
-     * Processando a jogada 
+     * Processa a jogada recebida da View.
+     * 
+     * @param {*} idLinha linha selecionada.
+     * @param {*} idJogador jogador que fez a jogada.
+     * 
+     * @returns jogadaValida {boolean} true se a jogada for válida, false caso contrário.
      */
-    processarJogada: function(idLinha, idJogador) {
+    processarJogada: function (idLinha, idJogador) {
         console.log(`Game Engine recebeu jogada na linha ${idLinha}`);
 
-        // Descobre quem é o jogador atual dinamicamente
         let jogadorAtual = obterJogadorAtual();
         let idDoJogador = jogadorAtual ? jogadorAtual.id : 'P1';
 
         let jogadaValida = processarJogada(idLinha, idDoJogador);
 
-        // --- CÓDIGO NOVO: Se a jogada foi válida, reinicia o timer ---
-        // (Seja porque trocou o turno OU porque o jogador joga novamente)
         if (jogadaValida && quadradosFechados !== totalQuadradosPossiveis) {
             iniciarCronometro();
         }
-        
+
         return jogadaValida;
     },
 
-    reiniciar: function() {
+    /**
+     * Reinicia o jogo.
+     */
+    reiniciar: function () {
         console.log("Reiniciando jogo...");
-        
+
         pararCronometro();
-        estadoLinhas = {}; 
-        estadoQuadrados = {};     
+        estadoLinhas = {};
+        estadoQuadrados = {};
         quadradosFechados = 0;
 
         jogadoresMemoria.forEach(j => j.pontos = 0);
@@ -105,10 +109,21 @@ const GameEngine = {
 
         this.iniciar();
     },
-    obterJogadores: function() {
+    /**
+     * Obtém a lista de jogadores.
+     * 
+     * @returns Array de jogadores.
+     */
+    obterJogadores: function () {
         return jogadoresMemoria;
     },
-    jogoTerminado: function() {
+
+    /**
+     * Verifica se o jogo terminou.
+     * 
+     * @returns boolean indicando se o jogo terminou.
+     */
+    jogoTerminado: function () {
         return quadradosFechados === totalQuadradosPossiveis;
     }
 };
@@ -129,7 +144,6 @@ function inicializarLinhas(xmlDoc) {
     let numLinhas = parseInt($tabuleiro.attr('linhas'));
     let numColunas = parseInt($tabuleiro.attr('colunas'));
 
-    // Inicializa o estado das linhas horizontais (H)
     for (let l = 0; l < numLinhas; l++) {
         for (let c = 0; c < numColunas - 1; c++) {
             let id = `h-${l}-${c}`;
@@ -137,7 +151,6 @@ function inicializarLinhas(xmlDoc) {
         }
     }
 
-    // Inicializa o estado das linhas verticais (V)
     for (let l = 0; l < numLinhas - 1; l++) {
         for (let c = 0; c < numColunas; c++) {
             let id = `v-${l}-${c}`;
@@ -161,7 +174,6 @@ var quadradosFechados = 0;
 function processarJogada(idLinha, idJogador) {
     let linha = estadoLinhas[idLinha];
 
-    // Se a linha não existe na memória, cria ela na hora (segurança)
     if (!linha) {
         console.warn(`Linha ${idLinha} não encontrada na memória (Criando para teste)`);
         estadoLinhas[idLinha] = { id: idLinha, status: 'livre', dono: null };
@@ -178,7 +190,7 @@ function processarJogada(idLinha, idJogador) {
         if (pontos > 0) {
             console.log(`Jogador ${idJogador} fechou ${pontos} quadrado(s)! Joga de novo.`);
         } else {
-            alternarTurno(); 
+            alternarTurno();
         }
 
         if (typeof GameView !== 'undefined' && typeof GameView.atualizarInterface === 'function') {
@@ -187,11 +199,11 @@ function processarJogada(idLinha, idJogador) {
             console.error("ERRO: GameView ou atualizarInterface não encontrados!");
         }
 
-        return true; // Jogada válida
+        return true;
     }
 
     console.log("Jogada inválida ou linha ocupada");
-    return false; // Jogada inválida
+    return false;
 }
 
 /**
@@ -201,7 +213,7 @@ function processarJogada(idLinha, idJogador) {
 function carregarJogadores(xmlDoc) {
     jogadoresMemoria = [];
 
-    $(xmlDoc).find('jogador').each(function() {
+    $(xmlDoc).find('jogador').each(function () {
         var jogador = {
             id: $(this).attr('id'),
             nome: $(this).attr('nome'),
@@ -219,19 +231,20 @@ function carregarJogadores(xmlDoc) {
 }
 
 /**
- * Função para retornar que é o jogador da vez atual.
+ * Obtém o jogador atual.
+ * 
+ * @returns Jogador atual.
  */
 function obterJogadorAtual() {
     return jogadoresMemoria.find(j => j.atual === true);
 }
 
-/**
- * Função para trocar o turno.
- * Deve ser chamada quando o jogador faz uma jogada e não fecha o quadrado.
+/** 
+ * Alterna o turno para o próximo jogador.
  */
 function alternarTurno() {
     var indexAtual = jogadoresMemoria.findIndex(i => i.atual === true);
-    
+
     if (indexAtual !== -1) {
         jogadoresMemoria[indexAtual].atual = false;
         var proximoIndex = (indexAtual + 1) % jogadoresMemoria.length;
@@ -242,7 +255,11 @@ function alternarTurno() {
 }
 
 /**
- * Verifica os vizinhos da linha recém clicada
+ * Verifica se a jogada fechou algum quadrado.
+ * @param {*} idLinha linha selecionada.
+ * @param {*} idJogador jogador que fez a jogada.
+ * 
+ * @returns totalFechados número de quadrados fechados.
  */
 function verificarQuadradosFechados(idLinha, idJogador) {
     let partes = idLinha.split('-'); // ex: h-0-0
@@ -255,7 +272,7 @@ function verificarQuadradosFechados(idLinha, idJogador) {
     if (tipo === 'h') {
         if (checarQuadrado(l, c, idJogador)) totalFechados++;
         if (checarQuadrado(l - 1, c, idJogador)) totalFechados++;
-    } 
+    }
     else if (tipo === 'v') {
         if (checarQuadrado(l, c, idJogador)) totalFechados++;
         if (checarQuadrado(l, c - 1, idJogador)) totalFechados++;
@@ -265,25 +282,30 @@ function verificarQuadradosFechados(idLinha, idJogador) {
 }
 
 /**
- * Verifica se as 4 arestas do quadrado [l, c] estão ocupadas
+ * checa se o quadrado na posição (l, c) está fechado.
+ * 
+ * @param {*} l linha
+ * @param {*} c coluna
+ * @param {*} idJogador jogador que fez a jogada
+ *  
+ * @returns boolean true se o quadrado foi fechado, false caso contrário.
  */
 function checarQuadrado(l, c, idJogador) {
     let idQuad = `q-${l}-${c}`;
-    
+
     if (estadoQuadrados[idQuad]) return false;
 
-    let topo    = `h-${l}-${c}`;
-    let baixo   = `h-${l+1}-${c}`;
-    let esq     = `v-${l}-${c}`;
-    let dir     = `v-${l}-${c+1}`;
+    let topo = `h-${l}-${c}`;
+    let baixo = `h-${l + 1}-${c}`;
+    let esq = `v-${l}-${c}`;
+    let dir = `v-${l}-${c + 1}`;
 
     if (isOcupada(topo) && isOcupada(baixo) && isOcupada(esq) && isOcupada(dir)) {
-        
-        estadoQuadrados[idQuad] = idJogador;
-        
-        quadradosFechados++;  // ADICIONADO: conta quadrado fechado
 
-        // Atualiza pontuação do jogador
+        estadoQuadrados[idQuad] = idJogador;
+
+        quadradosFechados++; 
+
         const jogador = jogadoresMemoria.find(j => j.id === idJogador);
         if (jogador) {
             jogador.pontos++;
@@ -293,7 +315,6 @@ function checarQuadrado(l, c, idJogador) {
             GameView.pintarQuadrado(idQuad, idJogador);
         }
 
-        // ADICIONADO: Verifica se o jogo acabou
         if (quadradosFechados === totalQuadradosPossiveis) {
             setTimeout(() => {
                 const p1 = jogadoresMemoria[0];
@@ -317,13 +338,24 @@ function checarQuadrado(l, c, idJogador) {
     return false;
 }
 
+/**
+ * Verifica se a linha está ocupada.
+ * @param {*} id id da linha
+ * 
+ * @returns boolean true se a linha estiver ocupada, false caso contrário.
+ */
 function isOcupada(id) {
     return estadoLinhas[id] && estadoLinhas[id].status === 'ocupada';
 }
 
+/**
+ * Inicia o cronômetro para o turno atual.
+ * 
+ * @returns cronômetro iniciado.
+ */
 function iniciarCronometro() {
     pararCronometro(); // Limpa timer anterior para não encavalar
-    
+
     if (tempoPorTurno === 0) {
         console.log("Modo Paciência: Sem cronômetro.");
         if (typeof GameView !== 'undefined') {
@@ -335,15 +367,13 @@ function iniciarCronometro() {
     tempoRestante = tempoPorTurno;
     console.log(`Cronômetro iniciado: ${tempoRestante}s`);
 
-    // Atualiza visualmente imediatamente (opcional, se tiver suporte na View)
     if (typeof GameView !== 'undefined' && typeof GameView.atualizarTempo === 'function') {
         GameView.atualizarTempo(tempoRestante);
     }
 
-    intervaloTimer = setInterval(function() {
+    intervaloTimer = setInterval(function () {
         tempoRestante--;
 
-        // Atualiza a View se existir
         if (typeof GameView !== 'undefined' && typeof GameView.atualizarTempo === 'function') {
             GameView.atualizarTempo(tempoRestante);
         }
@@ -354,7 +384,7 @@ function iniciarCronometro() {
             alert("Tempo esgotado! Passando a vez.");
 
             alternarTurno();
-            iniciarCronometro(); // Reinicia o tempo para o próximo jogador
+            iniciarCronometro();
 
             if (typeof GameView !== 'undefined' && typeof GameView.atualizarInterface === 'function') {
                 GameView.atualizarInterface();
