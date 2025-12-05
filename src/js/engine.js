@@ -23,6 +23,24 @@ const GameEngine = {
         const $xml = $(xmlDoc);
         const $tabuleiro = $xml.find("tabuleiro");
 
+        // carrega os modos de tempo
+        let modosDeTempo = [];
+        $xml.find('modo-tempo').each(function(){
+            modosDeTempo.push({
+                nome: $(this).attr('nome'),
+                tempo: parseInt($(this).attr('tempo'))
+            });
+        });
+
+        // Define o padrão se existir, ou o primeiro da lista
+        let modoPadrao = modosDeTempo.find(m => m.nome === "Normal") || modosDeTempo[0];
+        tempoPorTurno = modoPadrao.tempo;
+        
+        // Envia a lista para a View criar o dropdown
+        if(typeof GameView !== 'undefined' && typeof GameView.renderizarSeletorTempo === 'function'){
+            GameView.renderizarSeletorTempo(modosDeTempo, tempoPorTurno);
+        }
+
         inicializarLinhas(xmlDoc);
 
         //Chamando os jogadores
@@ -46,6 +64,8 @@ const GameEngine = {
                 GameView.atualizarInterface();
             }
         }
+
+        iniciarCronometro();
     },    
     
     /**
@@ -58,13 +78,21 @@ const GameEngine = {
         let jogadorAtual = obterJogadorAtual();
         let idDoJogador = jogadorAtual ? jogadorAtual.id : 'P1';
 
-        // Chamando Função processarJogada
-        return processarJogada(idLinha, idDoJogador);
+        let jogadaValida = processarJogada(idLinha, idDoJogador);
+
+        // --- CÓDIGO NOVO: Se a jogada foi válida, reinicia o timer ---
+        // (Seja porque trocou o turno OU porque o jogador joga novamente)
+        if (jogadaValida && quadradosFechados !== totalQuadradosPossiveis) {
+            iniciarCronometro();
+        }
+        
+        return jogadaValida;
     },
 
     reiniciar: function() {
         console.log("Reiniciando jogo...");
         
+        pararCronometro();
         estadoLinhas = {}; 
         estadoQuadrados = {};     
         quadradosFechados = 0;
@@ -88,6 +116,9 @@ const GameEngine = {
 
 var estadoLinhas = {};
 var jogadoresMemoria = [];
+var intervaloTimer = null;
+var tempoPorTurno = 30;
+var tempoRestante = 0;
 
 /**
  * Inicializa o estado das linhas do tabuleiro com base na configuração do XML.
@@ -288,4 +319,60 @@ function checarQuadrado(l, c, idJogador) {
 
 function isOcupada(id) {
     return estadoLinhas[id] && estadoLinhas[id].status === 'ocupada';
+}
+
+function iniciarCronometro() {
+    pararCronometro(); // Limpa timer anterior para não encavalar
+    
+    if (tempoPorTurno === 0) {
+        console.log("Modo Paciência: Sem cronômetro.");
+        if (typeof GameView !== 'undefined') {
+            GameView.atualizarTempo("∞");
+        }
+        return;
+    }
+
+    tempoRestante = tempoPorTurno;
+    console.log(`Cronômetro iniciado: ${tempoRestante}s`);
+
+    // Atualiza visualmente imediatamente (opcional, se tiver suporte na View)
+    if (typeof GameView !== 'undefined' && typeof GameView.atualizarTempo === 'function') {
+        GameView.atualizarTempo(tempoRestante);
+    }
+
+    intervaloTimer = setInterval(function() {
+        tempoRestante--;
+
+        // Atualiza a View se existir
+        if (typeof GameView !== 'undefined' && typeof GameView.atualizarTempo === 'function') {
+            GameView.atualizarTempo(tempoRestante);
+        }
+
+        if (tempoRestante <= 0) {
+            pararCronometro();
+            console.log("Tempo esgotado! Trocando turno...");
+            alert("Tempo esgotado! Passando a vez.");
+
+            alternarTurno();
+            iniciarCronometro(); // Reinicia o tempo para o próximo jogador
+
+            if (typeof GameView !== 'undefined' && typeof GameView.atualizarInterface === 'function') {
+                GameView.atualizarInterface();
+            }
+        }
+    }, 1000);
+}
+
+function pararCronometro() {
+    if (intervaloTimer) {
+        clearInterval(intervaloTimer);
+        intervaloTimer = null;
+    }
+}
+
+function mudarConfiguracaoTempo(novoTempo) {
+    console.log(`Mudando tempo para: ${novoTempo}s`);
+    tempoPorTurno = parseInt(novoTempo);
+
+    iniciarCronometro();
 }

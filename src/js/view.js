@@ -1,6 +1,9 @@
 const GameView = {
     renderizarTabuleiro: function(dados) {
         console.log("Renderizando Visualização...");
+
+        this.criarDisplayTempo();
+
         $("#game-title").text(dados.titulo);
         const $board = $("#tabuleiro-visual");
         $board.empty();
@@ -199,5 +202,87 @@ const GameView = {
         if (typeof GameView.atualizarPlacar === 'function') {
             GameView.atualizarPlacar();
         }
-    }
+    },
+
+
+    criarDisplayTempo: function() {
+        // Verifica se já existe para não duplicar
+        if ($("#cronometro-display").length === 0) {
+            
+            const $containerTempo = $("<div>")
+                .attr("id", "cronometro-container")
+                .addClass("text-center mb-2 mt-2");
+
+            const $badgeTempo = $("<span>")
+                .attr("id", "cronometro-display")
+                .addClass("badge bg-dark fs-4")
+                .css("min-width", "120px")  
+                .text("00s");
+
+            $containerTempo.append($badgeTempo);
+
+            $("#tabuleiro-visual").before($containerTempo);
+        }
+    },
+
+    atualizarTempo: function(segundos) {
+        const $display = $("#cronometro-display");
+
+        if (typeof segundos === 'string') {
+             $display.text(`⏱ ${segundos}`);
+             $display.removeClass("bg-danger bg-warning").addClass("bg-success");
+             return;
+        }
+        
+        $display.text(`⏱ ${segundos}s`);
+
+        $display.removeClass("bg-success bg-warning bg-danger bg-dark");
+
+        if (segundos <= 5) {
+            $display.addClass("bg-danger");
+        } else if (segundos <= 10) {
+            $display.addClass("bg-warning text-dark");
+        } else {
+            $display.addClass("bg-success");
+        }
+    },
+
+    renderizarSeletorTempo: function(modos, tempoInicial) {
+        $("#container-seletor-tempo").remove();
+
+        const $container = $("<div>")
+            .attr("id", "container-seletor-tempo")
+            .addClass("d-flex justify-content-center align-items-center mb-3 gap-2");
+
+        const $label = $("<label>").text("Modo de Tempo: ").addClass("fw-bold");
+        
+        const $select = $("<select>").addClass("form-select w-auto");
+
+        modos.forEach(modo => {
+            let $option = $("<option>")
+                .val(modo.tempo)
+                .text(`${modo.nome} (${modo.tempo === 0 ? '∞' : modo.tempo + 's'})`);
+            
+            if (modo.tempo === tempoInicial) {
+                $option.attr("selected", true);
+            }
+            $select.append($option);
+        });
+
+        $select.on("change", function() {
+            let novoTempo = $(this).val();
+            
+            if (typeof mudarConfiguracaoTempo === 'function') {
+                mudarConfiguracaoTempo(novoTempo);
+            }
+        });
+
+        $container.append($label, $select);
+
+        if ($("#cronometro-container").length > 0) {
+            $("#cronometro-container").before($container);
+        } else {
+            $("#tabuleiro-visual").before($container);
+        }
+    },
 };
