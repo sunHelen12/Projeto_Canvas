@@ -1,5 +1,4 @@
 const GameEngine = {
-    // Memória interna - Estado do Jogo
     dadosDoJogo:{},
 
     /**
@@ -9,7 +8,6 @@ const GameEngine = {
     iniciar: function(){
         console.log("Motor ligado...")
 
-        // Fazendo requisição HTTP
         $.get("../data/game-config.xml")
             .done((xml) =>{
                 console.log("XML Recebido!");
@@ -20,14 +18,11 @@ const GameEngine = {
             });
     },
 
-    // Jogando o XML para a memória JS
     processarDados: function(xmlDoc){
         console.log("Processando dados...");
-        // Navegando com o JQuery no XML
         const $xml = $(xmlDoc);
         const $tabuleiro = $xml.find("tabuleiro");
 
-        // Chamando Função inicializarLinhas
         inicializarLinhas(xmlDoc);
 
         //Chamando os jogadores
@@ -40,7 +35,6 @@ const GameEngine = {
             colunas: parseInt($tabuleiro.attr('colunas'))
         };       
 
-        // Chamando Visualização
         if(typeof GameView !== 'undefined'){
             GameView.renderizarTabuleiro(this.dadosDoJogo);
 
@@ -53,7 +47,6 @@ const GameEngine = {
     /**
      * Processando a jogada 
      */
-
     processarJogada: function(idLinha, idJogador) {
         console.log(`Game Engine recebeu jogada na linha ${idLinha}`);
 
@@ -63,7 +56,15 @@ const GameEngine = {
 
         // Chamando Função processarJogada
         return processarJogada(idLinha, idJogador);
-    }
+    },
+
+    reiniciar: function() {
+        console.log("Reiniciando jogo...");
+        
+        estadoLinhas = {}; 
+
+        this.iniciar();
+    },
 };
 
 
@@ -75,7 +76,6 @@ var jogadoresMemoria = [];
  * @param {*} xmlDoc - Documento XML contendo a configuração do jogo. 
  */
 function inicializarLinhas(xmlDoc) {
-    // Extrai o número de linhas e colunas do tabuleiro a partir do XML
     let $tabuleiro = $(xmlDoc).find('tabuleiro');
     let numLinhas = parseInt($tabuleiro.attr('linhas'));
     let numColunas = parseInt($tabuleiro.attr('colunas'));
@@ -98,6 +98,8 @@ function inicializarLinhas(xmlDoc) {
     console.log("Linhas inicializadas na memória:", estadoLinhas);
 }
 
+var estadoQuadrados = {};
+
 /**
  * Processa uma jogada feita por um jogador.
  * 
@@ -105,10 +107,10 @@ function inicializarLinhas(xmlDoc) {
  * @param {*} idJogador jogador que fez a jogada.
  * @returns {boolean} true se a jogada for válida, false caso contrário.
  */
-function processarJogada (idLinha, idJogador) {
+function processarJogada(idLinha, idJogador) {
     let linha = estadoLinhas[idLinha];
 
-    // Se a linha não existe na memória, cria ela na hora
+    // Se a linha não existe na memória, cria ela na hora (segurança)
     if (!linha) {
         console.warn(`Linha ${idLinha} não encontrada na memória (Criando para teste)`);
         estadoLinhas[idLinha] = { id: idLinha, status: 'livre', dono: null };
@@ -116,13 +118,17 @@ function processarJogada (idLinha, idJogador) {
     }
 
     if (linha && linha.status === 'livre') {
-        // Atualiza estado
         linha.status = 'ocupada';
         linha.dono = idJogador;
-
-        // Registra a jogada
         console.log(`Linha ${idLinha} dominada por ${idJogador}`);
-        alternarTurno(); 
+
+        let pontos = verificarQuadradosFechados(idLinha, idJogador);
+
+        if (pontos > 0) {
+            console.log(`Jogador ${idJogador} fechou ${pontos} quadrado(s)! Joga de novo.`);
+        } else {
+            alternarTurno(); 
+        }
 
         if (typeof GameView !== 'undefined' && typeof GameView.atualizarInterface === 'function') {
             GameView.atualizarInterface();
@@ -142,7 +148,7 @@ function processarJogada (idLinha, idJogador) {
  * Lê o XML e preenche a variável jogadoresMemoria.
  */
 function carregarJogadores(xmlDoc) {
-    jogadoresMemoria = []; // Limpa array
+    jogadoresMemoria = [];
 
     $(xmlDoc).find('jogador').each(function() {
         var jogador = {
@@ -179,4 +185,56 @@ function alternarTurno() {
 
         console.log("Turno alternado. Vez de:", jogadoresMemoria[proximoIndex].nome);
     }
+}
+
+/**
+ * Verifica os vizinhos da linha recém clicada
+ */
+function verificarQuadradosFechados(idLinha, idJogador) {
+    let partes = idLinha.split('-'); // ex: h-0-0
+    let tipo = partes[0];
+    let l = parseInt(partes[1]);
+    let c = parseInt(partes[2]);
+
+    let totalFechados = 0;
+
+    if (tipo === 'h') {
+        if (checarQuadrado(l, c, idJogador)) totalFechados++;
+        if (checarQuadrado(l - 1, c, idJogador)) totalFechados++;
+    } 
+    else if (tipo === 'v') {
+        if (checarQuadrado(l, c, idJogador)) totalFechados++;
+        if (checarQuadrado(l, c - 1, idJogador)) totalFechados++;
+    }
+
+    return totalFechados;
+}
+
+/**
+ * Verifica se as 4 arestas do quadrado [l, c] estão ocupadas
+ */
+function checarQuadrado(l, c, idJogador) {
+    let idQuad = `q-${l}-${c}`;
+    
+    if (estadoQuadrados[idQuad]) return false;
+
+    let topo    = `h-${l}-${c}`;
+    let baixo   = `h-${l+1}-${c}`;
+    let esq     = `v-${l}-${c}`;
+    let dir     = `v-${l}-${c+1}`;
+
+    if (isOcupada(topo) && isOcupada(baixo) && isOcupada(esq) && isOcupada(dir)) {
+        
+        estadoQuadrados[idQuad] = idJogador;
+        
+        if (typeof GameView !== 'undefined') {
+            GameView.pintarQuadrado(idQuad, idJogador);
+        }
+        return true; 
+    }
+    return false;
+}
+
+function isOcupada(id) {
+    return estadoLinhas[id] && estadoLinhas[id].status === 'ocupada';
 }
