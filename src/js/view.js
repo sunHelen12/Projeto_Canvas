@@ -1,4 +1,12 @@
+/**
+ * Objeto responsável pela visualização do jogo.
+ */
 const GameView = {
+    /**
+     * Renderiza o tabuleiro do jogo com base nos dados fornecidos.
+     * 
+     * @param {*} dados Objeto contendo as configurações do tabuleiro.
+     */
     renderizarTabuleiro: function(dados) {
         console.log("Renderizando Visualização...");
 
@@ -50,6 +58,9 @@ const GameView = {
         this.configurarCliques();
     },
 
+     /**
+      * Configura os eventos de clique nas linhas do tabuleiro.
+      */
     configurarCliques: function() {
         $(document).off('click', '.linha-jogo');
 
@@ -57,13 +68,11 @@ const GameView = {
             let idClicado = $(this).attr('id');
             console.log("Clique detectado em:", idClicado);
 
-            // Identificar quem está clicando
             let jogador = null;
             if (typeof obterJogadorAtual === 'function') {
                 jogador = obterJogadorAtual();
             }
 
-            // Integração com o motor
             let jogadaValida = false;
             if (typeof GameEngine !== 'undefined' && GameEngine.processarJogada) {
                 jogadaValida = GameEngine.processarJogada(idClicado);
@@ -107,7 +116,10 @@ const GameView = {
     },
 
     /**
-     * Pinta o interior do quadrado
+     * Pinta o quadrado com a cor do jogador que o fechou.
+     * 
+     * @param {*} idQuadrado id do quadrado.
+     * @param {*} idJogador id do jogador que fechou o quadrado.
      */
     pintarQuadrado: function(idQuadrado, idJogador) {
         console.log(`Pintando ${idQuadrado} para ${idJogador}`);
@@ -119,6 +131,9 @@ const GameView = {
         $(`#${idQuadrado}`).removeClass('quadrado-p1 quadrado-p2').addClass(idJogador === '1' ? 'quadrado-p1' : 'quadrado-p2');
     },
 
+    /**
+     * Cria o botão de reiniciar o jogo.
+     */
     criarBotaoReiniciar: function() {
         if ($("#btn-reiniciar").length > 0) return;
 
@@ -137,6 +152,9 @@ const GameView = {
                 "cursor": "pointer"
             });
 
+        /**
+         * Evento de clique para reiniciar o jogo.
+         */
         $btn.on("click", function() {
             
             if ($("#alerta-fim").length > 0) {
@@ -153,7 +171,9 @@ const GameView = {
                 GameEngine.reiniciar();
             }
 
-            
+            /**
+             * Delay para garantir que a interface seja atualizada após o reinício.
+             */
             setTimeout(() => {
                 if (typeof GameView.atualizarInterface === 'function') {
                     GameView.atualizarInterface();
@@ -167,6 +187,9 @@ const GameView = {
         $("#tabuleiro-visual").after($btn);
     },
 
+    /**
+     * Atualiza o placar exibido na interface.
+     */
    atualizarPlacar: function() {
         
         if (typeof GameEngine !== 'undefined' && typeof GameEngine.obterJogadores === 'function') {
@@ -180,7 +203,12 @@ const GameView = {
         }
     },
 
-    
+    /**
+     * Exibe a mensagem de fim de jogo.
+     * 
+     * @param {*} vencedor id do jogador vencedor ou "Empate".
+     * @param {*} placar placar final do jogo.
+     */
     exibirFimDeJogo: function(vencedor, placar) {
         const mensagem = vencedor === "Empate" 
             ? `Fim de jogo! Empate com ${placar} pontos cada!`
@@ -204,9 +232,10 @@ const GameView = {
         }
     },
 
-
+    /**
+     * Cria o display do cronômetro.
+     */
     criarDisplayTempo: function() {
-        // Verifica se já existe para não duplicar
         if ($("#cronometro-display").length === 0) {
             
             const $containerTempo = $("<div>")
@@ -225,6 +254,11 @@ const GameView = {
         }
     },
 
+    /**
+     * Atualiza o display do cronômetro com o tempo restante.
+     * 
+     * @param {*} segundos segundos restantes ou string para exibir mensagem.
+     */
     atualizarTempo: function(segundos) {
         const $display = $("#cronometro-display");
 
@@ -247,6 +281,12 @@ const GameView = {
         }
     },
 
+    /**
+     * Renderiza o seletor de modos de tempo.
+     * 
+     * @param {*} modos modos de tempo disponíveis.
+     * @param {*} tempoInicial tempo inicial selecionado.
+     */
     renderizarSeletorTempo: function(modos, tempoInicial) {
         $("#container-seletor-tempo").remove();
 
